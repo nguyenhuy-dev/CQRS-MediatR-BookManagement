@@ -22,7 +22,11 @@ namespace BookManagement
 
             builder.Services.AddAutoMapper(cfg => { }, typeof(Entity2Domain).Assembly);
 
+            builder.Configuration.AddJsonFile("/run/secrets/connection_strings", optional: true);
+
             builder.Services.AddDbContext<BookManagementDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("BookManagementDatabase")));
+
+            //builder.Services.AddHostedService<Worker>(); // for Web API
 
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

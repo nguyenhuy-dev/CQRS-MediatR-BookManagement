@@ -7,6 +7,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Docker secrets
+connection_strings.txt
+db_password.txt
+
 # Appsettings.json
 appsettings.json
 

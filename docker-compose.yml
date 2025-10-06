@@ -1,0 +1,41 @@
+name: BookManagement
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    ports:
+      - "5431:5432"
+
+  bookmanagement-migrationservice:
+    image: bookmanagementmigrationservice:latest
+    depends_on:
+      - postgres
+    secrets:
+      - connection_strings
+  
+  bookmanagement:
+    image: bookmanagement:latest
+    restart: always
+    depends_on:
+      - bookmanagement-migrationservice
+    ports:
+      - "8080:8080"
+    secrets: 
+      - connection_strings
+      
+secrets:
+  db_password:
+    file: ./db_password.txt
+  connection_strings:
+    file: ./connection_strings.txt
+
+volumes:
+  postgres_data:
