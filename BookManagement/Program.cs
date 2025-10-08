@@ -1,12 +1,5 @@
-using BookManagement.Application.Behaviors;
-using BookManagement.Domain.Repositories;
-using BookManagement.Infrastructure.Data;
-using BookManagement.Infrastructure.MapperProfile;
-using BookManagement.Infrastructure.Repositories;
+using BookManagement.Bootstraping;
 using BookManagement.Middleware;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using FluentValidation;
 
 namespace BookManagement
 {
@@ -18,27 +11,9 @@ namespace BookManagement
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-
-            builder.Services.AddAutoMapper(cfg => { }, typeof(Entity2Domain).Assembly);
-
-            builder.Configuration.AddJsonFile("/run/secrets/connection_strings", optional: true);
-
-            builder.Services.AddDbContext<BookManagementDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("BookManagementDatabase")));
-
-            //builder.Services.AddHostedService<Worker>(); // for Web API
-
-            builder.Services.AddScoped<IBookRepository, BookRepository>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            builder.Services.AddTransient<ExceptionHandlingMiddleware>();
-
-            var applicationAssembly = typeof(Application.AssemblyReference).Assembly;
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(applicationAssembly));
-
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-            builder.Services.AddValidatorsFromAssembly(applicationAssembly);
+            builder.AddApplicationServices();
+            
+            builder.AddDIServices();
 
             var app = builder.Build();
 

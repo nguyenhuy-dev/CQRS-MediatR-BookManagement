@@ -6,12 +6,32 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BookManagement.MigrationService
 {
+    /// <summary>
+    /// Run under application.
+    /// Supporting migration service.
+    /// </summary>
+    /// <seealso cref="Microsoft.Extensions.Hosting.BackgroundService" />
     public class Worker : BackgroundService
     {
+        /// <summary>
+        /// The host application lifetime
+        /// </summary>
         private readonly IHostApplicationLifetime _hostApplicationLifetime;
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILogger<Worker> _logger;
+        /// <summary>
+        /// The service provider
+        /// </summary>
         private readonly IServiceProvider _serviceProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Worker"/> class.
+        /// </summary>
+        /// <param name="hostApplicationLifetime">The host application lifetime.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="serviceProvider">The service provider.</param>
         public Worker(IHostApplicationLifetime hostApplicationLifetime, ILogger<Worker> logger, IServiceProvider serviceProvider)
         {
             _hostApplicationLifetime = hostApplicationLifetime;
@@ -19,6 +39,14 @@ namespace BookManagement.MigrationService
             _serviceProvider = serviceProvider;
         }
 
+        /// <summary>
+        /// This method is called when the <see cref="T:Microsoft.Extensions.Hosting.IHostedService" /> starts. The implementation should return a task that represents
+        /// the lifetime of the long running operation(s) being performed.
+        /// </summary>
+        /// <param name="stoppingToken">Triggered when <see cref="M:Microsoft.Extensions.Hosting.IHostedService.StopAsync(System.Threading.CancellationToken)" /> is called.</param>
+        /// <remarks>
+        /// See <see href="https://docs.microsoft.com/dotnet/core/extensions/workers">Worker Services in .NET</see> for implementation guidelines.
+        /// </remarks>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
@@ -49,6 +77,11 @@ namespace BookManagement.MigrationService
             _hostApplicationLifetime.StopApplication(); // using when deploy dependence in Docker
         }
 
+        /// <summary>
+        /// Ensures the database asynchronous.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        /// <param name="stoppingToken">The stopping token.</param>
         private async Task EnsureDatabaseAsync(BookManagementDbContext dbContext, CancellationToken stoppingToken)
         {
             var dbCreator = dbContext.GetService<IRelationalDatabaseCreator>();
@@ -63,6 +96,11 @@ namespace BookManagement.MigrationService
             });
         }
 
+        /// <summary>
+        /// Seeds the data asynchronous.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        /// <param name="stoppingToken">The stopping token.</param>
         private async Task SeedDataAsync(BookManagementDbContext dbContext, CancellationToken stoppingToken)
         {
             Author author = new()
@@ -80,6 +118,11 @@ namespace BookManagement.MigrationService
             });
         }
 
+        /// <summary>
+        /// Runs the migration asynchronous.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
+        /// <param name="stoppingToken">The stopping token.</param>
         private async Task RunMigrationAsync(BookManagementDbContext dbContext, CancellationToken stoppingToken)
         {
             var strategy = dbContext.Database.CreateExecutionStrategy();

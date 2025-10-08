@@ -35,7 +35,7 @@ namespace BookManagement.Controllers
 
             var book = await _sender.Send(command, cancellationToken);
 
-            return CreatedAtAction(nameof(GetBookById), new { bookId = book.BookId }, book);
+            return CreatedAtAction(nameof(GetBookById), new { bookId = book.BookId }, book); // Chỉ có Entities ở Domain
         }
 
         [HttpGet("{bookId}")]

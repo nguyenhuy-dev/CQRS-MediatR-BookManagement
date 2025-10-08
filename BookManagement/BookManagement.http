@@ -1,6 +1,13 @@
 @BookManagement_HostAddress = http://localhost:5052
 
-GET {{BookManagement_HostAddress}}/weatherforecast/
+GET {{BookManagement_HostAddress}}/api/books
 Accept: application/json
 
 ###
+POST {{BookManagement_HostAddress}}/api/books
+Content-Type: application/json
+{
+    "Title": "Harry Potter and the Goblet of Fire",
+    "PublishedYear": 2000,
+    "AuthorId": 1
+}

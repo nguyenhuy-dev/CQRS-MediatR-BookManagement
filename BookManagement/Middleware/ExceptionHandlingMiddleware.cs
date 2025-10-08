@@ -48,7 +48,7 @@ public sealed class ExceptionHandlingMiddleware : IMiddleware
 
         if (exception is Application.Exceptions.ValidationException validationException)
             errors = validationException.ErrorsDictionary;
-
+        
         return errors;
     }
 
